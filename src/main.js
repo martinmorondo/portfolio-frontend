@@ -1,5 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- MOBILE MENU TOGGLE  ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+    }
+
     // --- THEME TOGGLER ---
     const themeToggleButton = document.getElementById('theme-toggle');
     const lightIcon = document.getElementById('theme-toggle-light-icon');
@@ -20,13 +36,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Event listener for the theme toggle button
-    themeToggleButton.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-        const isDarkMode = document.documentElement.classList.contains('dark');
-        localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-        lightIcon.classList.toggle('hidden', isDarkMode);
-        darkIcon.classList.toggle('hidden', !isDarkMode);
-    });
+    if (themeToggleButton) {
+        themeToggleButton.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            lightIcon.classList.toggle('hidden', isDarkMode);
+            darkIcon.classList.toggle('hidden', !isDarkMode);
+        });
+    }
 
     // --- SMOOTH SCROLLING ---
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -35,8 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
             if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth'
+                const headerOffset = 80; 
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
                 });
             }
         });
@@ -44,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- TYPEWRITER EFFECT ---
     const typewriterElement = document.getElementById('typewriter');
+   if (typewriterElement) { 
     const roles = ["Web Developer", "Frontend Specialist", "UI/UX Enthusiast"];
     let roleIndex = 0;
     let charIndex = 0;
@@ -63,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         typewriterElement.textContent = displayText;
 
-        let typeSpeed = isDeleting ? 100 : 200;
+        let typeSpeed = isDeleting ? 50 : 100;
 
         if (!isDeleting && charIndex === currentRole.length) {
             typeSpeed = 2000; 
@@ -76,13 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setTimeout(type, typeSpeed);
     }
-
+    type();
+}
     // --- DYNAMIC PROJECT LOADING ---
     const projects = [
         {
             title: "E-commerce Platform",
             description: "A fully responsive e-commerce website with product filtering, a shopping cart, and a checkout process.",
-            image: "https://picsum.photos/seed/project1/400/300",
+            image: "https://images.unsplash.com/photo-1557821552-17105176677c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
             tags: ["HTML", "Tailwind CSS", "JavaScript"],
             liveUrl: "#",
             codeUrl: "#"
@@ -90,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             title: "Task Management App",
             description: "A Kanban-style task management application to organize and track your daily tasks and projects.",
-            image: "https://picsum.photos/seed/project2/400/300",
+            image: "https://images.unsplash.com/photo-1540350394557-8d14678e7f91?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
             tags: ["JavaScript", "Local Storage", "Tailwind CSS"],
             liveUrl: "#",
             codeUrl: "#"
@@ -98,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             title: "Portfolio Website Template",
             description: "Ongoing development of a modern, minimalist, and adaptable portfolio to showcase projects and skills.",
-            image: "https://picsum.photos/seed/project3/400/300",
+            image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
             tags: ["HTML", "CSS", "JavaScript"],
             liveUrl: "#",
             codeUrl: "#"
@@ -108,6 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectsGrid = document.getElementById('projects-grid');
     
     function loadProjects() {
+        if (!projectsGrid) return;
+       setTimeout(() => { 
         projectsGrid.innerHTML = ''; 
         projects.forEach(project => {
             const projectCard = `
@@ -128,15 +155,18 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             projectsGrid.innerHTML += projectCard;
         });
+        observeScrollTargets();
+        }, 800); 
     }
 
     // --- FADE-IN ON SCROLL ANIMATION ---
-    const scrollTargets = document.querySelectorAll('.scroll-target');
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    };
+    function observeScrollTargets() {
+        const scrollTargets = document.querySelectorAll('.scroll-target:not(.opacity-100)'); // Solo los que no han sido animados
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
 
     const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -189,14 +219,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isValid) {
-            console.log('Form submitted:', { name: name.value, email: email.value, message: message.value });
-            document.getElementById('form-success').classList.remove('hidden');
-            contactForm.reset();
-            setTimeout(() => {
-                document.getElementById('form-success').classList.add('hidden');
-            }, 5000);
-        }
-    });
+                // Simulación de envío
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+
+                setTimeout(() => {
+                    console.log('Form submitted:', { name: name.value, email: email.value, message: message.value });
+                    document.getElementById('form-success').classList.remove('hidden');
+                    contactForm.reset();
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalBtnText;
+                    
+                    setTimeout(() => {
+                        document.getElementById('form-success').classList.add('hidden');
+                    }, 5000);
+                }, 1500);
+            }
+        });
+    }
 
     function showError(fieldId, message) {
         const errorElement = document.querySelector(`[data-error-for="${fieldId}"]`);
@@ -207,10 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- FOOTER CURRENT YEAR ---
-    document.getElementById('current-year').textContent = new Date().getFullYear();
+    const yearSpan = document.getElementById('current-year');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
 
     // --- INITIALIZE FUNCTIONS ON PAGE LOAD ---
     applyTheme();
-    type();
     loadProjects();
+    observeScrollTargets();
 });
