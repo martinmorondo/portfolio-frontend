@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             image: "https://images.unsplash.com/photo-1557821552-17105176677c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
             tags: ["HTML", "Tailwind CSS", "JavaScript"],
             liveUrl: "#",
-            codeUrl: "#"
+            codeUrl: "https://github.com/martinmorondo/react-ecommerce"
         },
         {
             title: "Task Management App",
@@ -125,8 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
             description: "Ongoing development of a modern, minimalist, and adaptable portfolio to showcase projects and skills.",
             image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=60",
             tags: ["HTML", "CSS", "JavaScript"],
-            liveUrl: "#",
-            codeUrl: "#"
+            liveUrl: "https://martin-morondo-portfolio.netlify.app/",
+            codeUrl: "https://github.com/martinmorondo/portfolio-frontend"
         }
     ];
 
